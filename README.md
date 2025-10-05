@@ -1,7 +1,6 @@
 # 🏦 Bankalysis
 
-**Bankalysis** is a local-first personal finance analytics toolkit that transforms your **bank transaction CSV exports** into a rich **RDF knowledge graph**.  
-It combines **semantic web technology**, **data science**, and **privacy-first design** to help you explore and understand your finances — all running locally in Docker containers.
+**Bankalysis** is a local-first personal finance analytics toolkit that transforms your **bank transaction CSV exports** into a rich **RDF knowledge graph**. It combines **semantic web technology**, **data science**, and **privacy-first design** to help you explore and understand your finances — all running locally in Docker containers.
 
 ---
 
@@ -18,32 +17,14 @@ It combines **semantic web technology**, **data science**, and **privacy-first d
 
 ## 🧩 Architecture Overview
 
-1. **Bank CSV Export (from online banking)**:
-   - Data is exported from online banking in CSV format.
-
-2. **Preprocessing** (Python Container):
-   - The raw CSV data is preprocessed using Python libraries such as pandas and scikit-learn.
-   - This step includes cleaning and preparing the data for further processing.
-
-3. **Categorization** (Python Container):
-   - A custom Python model and rules are applied to categorize the transactions in the CSV data.
-
-4. **RML Transformation** (RMLMapper Container):
-   - The categorized data is transformed into RDF triples using RML (RDF Mapping Language).
-   - The transformation process is handled by the RMLMapper container.
-
-5. **RDF Triple Store** (Docker):
-   - The RDF triples are stored in a GraphDB or Apache Jena Fuseki instance running in a Docker container.
-   - This serves as the central storage for all processed data.
-
-6. **UI + Analytics Dashboard**:
-   - A user interface is built using React, with a backend powered by Flask or FastAPI.
-   - The dashboard allows users to run SPARQL queries to extract stats and insights from the RDF data.
-   - Visualizations are generated using libraries such as Plotly or D3.js.
-
-7. **Local Storage & Configs** (Docker Volumes):
-   - All local storage and configurations are managed within Docker volumes.
-   - No cloud infrastructure is used for storage, ensuring all data remains local.
+1. Bank CSV Export
+2. Processing
+  1. Preprocessing
+  2. Categorization
+  3. RML Transformation
+3. RDF Triple Store
+4. UI + Analytics Dashboard
+5. Local Storage & Configs
 
 
 ---
@@ -68,3 +49,33 @@ It combines **semantic web technology**, **data science**, and **privacy-first d
 ```bash
 git clone https://github.com/yourusername/bankalysis.git
 cd bankalysis
+```
+
+2. Add your bank CSV exports
+
+Place your CSV files in the data/input/ directory.
+(Example: `data/input/transactions_2025.csv`)
+
+3. Configure environment variables
+
+Edit .env to define:
+```
+BANKALYSIS_TRIPLESTORE=fuseki
+BANKALYSIS_PORT=8080
+```
+
+4. Start all containers
+`docker-compose up --build`
+
+
+5. Open the UI
+Visit: http://localhost:8080
+
+---
+
+🧠 Example Workflow
+1. Export transactions from your online banking as CSV
+2. Run preprocessing + categorization pipeline
+3. Transform to RDF using RML mapping rules (config/mapping.rml.ttl)
+4. Load triples into the local store (Fuseki/GraphDB)
+5. Query via SPARQL or explore visually in the dashboard
