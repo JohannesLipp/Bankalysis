@@ -15,16 +15,9 @@
 
 ---
 
-## 🧩 Architecture Overview
+## 🧩 Data Flow
 
-1. Bank CSV Export
-2. Processing
-  1. Preprocessing
-  2. Categorization
-  3. RML Transformation
-3. RDF Triple Store
-4. UI + Analytics Dashboard
-5. Local Storage & Configs
+[Bank CSV] → [Preprocessor] → [Categorizer] → [RML Mapper] → [Triple Store] → [SPARQL API] → [Analytics UI]
 
 
 ---
