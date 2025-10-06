@@ -1,0 +1,8 @@
+services:
+  bankalysis-analysis:
+    build: .
+    container_name: bankalysis-analysis
+    volumes:
+      - ../../data/processed/01-csv-preprocessing:/app/input
+      - ../../data/processed/02-demo-analysis:/app/output
+    restart: "no"

@@ -1,11 +1,9 @@
 import os
 import pandas as pd
 
-# INPUT_DIR = "/app/input"
-# OUTPUT_DIR = "/app/output"
-INPUT_DIR = "../../data/input"
-OUTPUT_DIR = "../../data/processed/01-csv-preprocessing"
-MAPPINGS_DIR = "../../mappings/"  # Keep trailing "/" for appending file name.
+INPUT_DIR = "/app/input"
+OUTPUT_DIR = "/app/output"
+MAPPINGS_DIR = "/app/mappings/"  # Keep trailing "/" for appending file name.
 
 # Ensure output directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -37,12 +35,10 @@ def process_csv(file_path):
         df = df[existing_cols]
 
         # Convert date format (DD.MM.YYYY → YYYY-MM-DD)
-        df["Buchungstag"] = pd.to_datetime(df["Buchungstag"], format="%d.%m.%Y", errors="coerce").dt.strftime(
-            "%Y-%m-%d")
+        df["Buchungstag"] = pd.to_datetime(df["Buchungstag"], format="%d.%m.%Y", errors="coerce")
 
         # Add empty "Category" column
         df["Category"] = None
-
         # 1) Apply mapping from reference-text.config.csv
         ref_map = pd.read_csv(MAPPINGS_DIR + "reference-text.config.csv", sep=";", encoding="utf-8")
         for _, row in ref_map.iterrows():
@@ -50,7 +46,6 @@ def process_csv(file_path):
             category = str(row["Category"]).strip()
             mask = df["Verwendungszweck"].astype(str).str.contains(match_str, case=False, na=False, regex=False)
             df.loc[mask, "Category"] = category
-
         # 2) Apply mapping from payment-party.config.csv (overrides previous)
         party_map = pd.read_csv(MAPPINGS_DIR + "payment-party.config.csv", sep=";", encoding="utf-8")
         for _, row in party_map.iterrows():
@@ -58,6 +53,12 @@ def process_csv(file_path):
             category = str(row["Category"]).strip()
             mask = df["Name Zahlungsbeteiligter"].astype(str).str.contains(match_str, case=False, na=False, regex=False)
             df.loc[mask, "Category"] = category
+
+        # Normalize numbers
+        df["Betrag"] = df["Betrag"].astype(str).str.replace(",", ".", regex=False)
+        df["Betrag"] = df["Betrag"].astype(float)
+        df["Saldo nach Buchung"] = df["Saldo nach Buchung"].astype(str).str.replace(",", ".", regex=False)
+        df["Saldo nach Buchung"] = df["Saldo nach Buchung"].astype(float)
 
         # Save output CSV
         output_path = os.path.join(OUTPUT_DIR, os.path.basename(file_path))

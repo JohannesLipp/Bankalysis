@@ -7,6 +7,9 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY preprocess.py .
+COPY analysis.py .
 
-CMD ["python", "preprocess.py"]
+# CMD ["python", "analysis.py"]
+# Print log to file instead of console:
+CMD ["bash", "-c", "python analysis.py > /app/output/analysis_log.txt 2>&1"]
+
