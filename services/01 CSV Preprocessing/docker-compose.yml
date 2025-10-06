@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  bankalysis-preprocessor:
+    build: .
+    container_name: bankalysis-preprocessor
+    volumes:
+      - ../../data/input:/app/input
+      - ../../data/processed/01-csv-preprocessing:/app/output
+    restart: "no"
